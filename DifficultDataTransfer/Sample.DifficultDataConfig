@@ -1,0 +1,63 @@
+﻿Mitchell's Difficult Data Transfer - Version 1.0.0.0
+
+--The program currently only supports OLEDB database connection strings, for both the source and destination databases.
+Source Connection String: provider=SQLOLEDB.1;Data Source=SAMPLEDBSERVER;database=SampleSourceDatabase;Trusted_Connection=yes
+
+--Table names do not normally need brackets around them. However, if the name contains spaces or special characters, we recommend using them. You can also prefix table names with an owner or schema.
+--For example, these are all in valid form: TableName , [Table Name] , dbo.TableName, [dbo].[Table Name]
+Source Table Name: OriginalInfo
+
+--If you require a WHERE clause to filter records from the source table, you can enter it here. Do NOT include the word "WHERE".
+--If you do not need one, you can leave the line for this setting out entirely. 
+Source Where Clause: Active = 1
+
+--Rules for destination connection strings and table names are the same as for the source.
+Destination Connection String: provider=SQLOLEDB.1;Data Source=SAMPLEDBSERVER;database=SampleFinalDatabase;Trusted_Connection=yes
+Destination Table Name: CurrentInfo
+
+--Identity Insert allows you to insert values directly into identity columns. If you know you need to do that, set the value to Y. Otherwise, we strongly recommend leaving it set to N.
+Identity Insert: N
+
+--A previous version of this code had a setting to truncate (clear out) the destination table before inserting data. But, this feature has been removed for now.
+
+--Stop On Error: If you want the program to stop the first time it encounters an unrecoverable error on a row, set this value to Y. Otherwise, it will try to continue processing the remaining records.
+Stop On Error: N
+
+--Batch Size is the number of records inserted into the database at a time. You can enter a number from 1 to 1000.  In most cases, the number 100 is considered optimal.
+--Any number higher than 100 might actually slow down performance in many cases. If you know you have a lot of terrible data at the source, you might want to consider a batch size of just 1.
+Batch Size: 100
+
+--Log File Path is the full path of the text file the program will append its log entries to. (If the file does not already exist, it will be created.)
+Log File Path: D:\DifficultDataLogs\OriginalInfoToCurrentInfo.txt
+
+Field Maps:
+--Field Maps are always in this format: [SourceField] To [DestinationField] DataType StringRulesIfString DefaultValue
+--Case is usually not important for most of these settings, except the Default Value for string fields.
+
+--The lines for field maps always start with an opening bracket: [
+--All column names must be enclosed in brackets, even if they do not contain spaces or special characters.
+--The word "To" is always used between the source and destination field names.
+
+--See documentation for what data types are supported. All of the most common ones should be, at least.
+--If a field is not allowed to be null, the word NotNULL should appear after the data type.
+
+--String Rules: There are two special settings that apply to char, nchar, varchar, and other string-based data types. They are: Trim and Trunc.
+--   Trim settings can be: Y or B for removing empty spaces from both ends, F for front (left side) only, E for end (right side) only, or N for no trimming.
+--   Trunc settings can be: Y to cut off characters that don't fit into the destination field.
+--                          Y... (a Y with three dots) to cut off the characters, and also add an ellipsis (...) to the end of the value.
+--                          N to use a default value instead, if the original value can not fit.
+--   In ALL cases where a string value is too long to fit into the destination field, the original full value will be noted in the log file.
+
+--Default Value can either have a specific value set after a colon, like this: DefaultValue:-1  , or if it is to be null, you can put this instead: DefaultISNULL
+--Date and time related fields could have either: a valid date and/or time value, OR one of these special words: NOW or MIN
+
+--Some Examples:
+[First Name] To [FirstName] varchar(50) NotNULL Trim:Y Trunc:Y DefaultValue:NA
+[Last Name] To [LastName] varchar(50) NotNULL Trim:Y Trunc:Y DefaultValue:NA
+[When Started] To [StartDate] datetime DefaultIsNULL
+[Date Added] To [DateAdded] date Default:NOW
+[Biography Text] To [Biography] nvarchar(500) Trim:N Trunc:N Default:None available at this time.
+[Power Level] To [PowerLevel] int Default:0
+[Last Audit] To [AuditDate] datetime Default:1/1/2026 6:00 AM
+[Notes] To [Notes] nvarchar(MAX) Trim:F Trunc:Y... Default:
+[Active] To [Active] bit NotNULL Default:1
