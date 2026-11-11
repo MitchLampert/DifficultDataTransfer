@@ -12,6 +12,10 @@ This is a data transfer tool designed to play a little loose with the rules, to 
 
 Read the main document, **Mitchells Difficult Data Transfer Program Instruction Manual V1.docx**, for details.
 
+
+
+NONE of this code was written with any A.I. It was all pieced together based on my own experience working for banks and such.
+
 ## 
 
 ## The Principles of Difficult Data Transfer
